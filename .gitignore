@@ -163,3 +163,7 @@ cython_debug/
 
 dados
 modelos
+lazy.py
+uv.lock
+catboost_info/
+.tmp.driveupload/
