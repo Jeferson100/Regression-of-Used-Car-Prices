@@ -34,6 +34,50 @@ etc.
 
 ### Tratamento de Dados
 
+**Foi aplicado os seguintes tratamentos ao conjunto de dados**
+
+1. **Retirando IDs**
+    - Remove a coluna `id` dos conjuntos de dados `train_x` e `test_x`.
+
+2. **Criando a Coluna Cilindros**
+    - Adiciona uma nova coluna representando o número de cilindros extraído dos dados da coluna `engine`.
+
+3. **Criando a Coluna "HP"**
+    - Cria uma coluna para a potência do motor (HP) extraída da coluna `engine`.
+
+4. **Criando a Coluna "Marchas**
+    - Adiciona uma coluna que representa o número de marchas do veículo extraído dos dados da coluna `transmission`.
+
+5. **Criando a Coluna Idade dos Carros**
+    - Cria uma coluna para a idade dos carros, calculada a partir dos dados da coluna `model_year`.
+
+6. **Criando a Coluna Câmbio**
+    - Adiciona uma coluna para o tipo de câmbio do veículo extraído dos dados da coluna `transmission`.
+
+7. **Dropando Colunas**
+    - Remove as colunas model, `model_year`, `model`, `engine`, `transmission` e `clean_title` dos conjuntos de dados.
+
+8. **Imputação dos valores faltantes na Coluna Marchas"**
+    - Preenche valores faltantes na coluna `marchas` utilizando um modelo de imputação treinado com as características `cambio`, `fuel_type`, `hp`, `idade_carro`,`cilindros`.
+
+9. **Imputação dos valores faltantes na Coluna HP"**
+    - Preenche valores faltantes na coluna `HP` utilizando um modelo de imputação treinado com as características `cambio`, `fuel_type`, `marchas`, `idade_carro`,`cilindros`.
+
+10. **Imputação dos valores faltantes na Coluna cilindros"**
+    - Preenche valores faltantes na coluna `cilindros` utilizando um modelo de imputação treinado com as características `cambio`, `fuel_type`, `marchas`, `idade_carro`,`HP`.
+
+11. **One-Hot Encoding para Colunas Categóricas**
+    - Aplicamos One-Hot Encoding para as colunas categóricas com uma frequência mínima de especificada para cada coluna, criando novas colunas para categorias pouco frequentes.
+
+12. **Normalização das Variáveis Numéricas**
+    - Normalizamos as variáveis numéricas utilizando a técnica de escalonamento StandardScaler.
+
+Após todo os tratamentos os conjuntos de dados ficaram com os seguintes tamanhos:
+
+- treino: `(150826, 53)`
+
+- teste: `(37707, 53)`
+
 ### Principais Características
 
 Utilizando a biblioteca [Shapley Additive exPlanations (SHAP)](https://shap.readthedocs.io/en/latest/), podemos identificar as variáveis mais importantes no modelo de regressão, com destaque para as variáveis `milage`, `hp`, `idade_carro`, `brand_Porsche`, e `brand_Land`.
@@ -55,3 +99,185 @@ Ao analisar o gráfico de `summary_plot`, observamos os seguintes insights:
 Este gráfico ajuda a visualizar o efeito de cada variável no modelo, ilustrando como diferentes características afetam o preço previsto de um veículo.
 
 ![Analise Exploratória](imagens/shap_summary_plot.png)
+
+
+### Treinamento
+
+Primeiramente, utilizei onze algoritmos para o treinamento com seus parâmetros padrão:
+
+- `LinearRegression()`
+- `DecisionTreeRegressor()`
+- `RandomForestRegressor()`
+- `GradientBoostingRegressor()`
+- `CatBoostRegressor()`
+- `keras.Sequential()`
+- `SVR()`
+- `SGDRegressor()`
+- `KNeighborsRegressor()`
+- `QuantileRegressor()`
+- `RandomForestRegressor()`
+
+O modelo **GradientBoosting** apresentou o melhor desempenho geral, com o menor RMSE e MSE, e um MAE relativamente baixo, tornando-o a escolha mais confiável entre os modelos. **Redes Neurais** e **CatBoost** também se destacaram, embora tenham um desempenho ligeiramente inferior em precisão e explicação da variação dos dados.
+
+**Linear Regression** teve um MAE significativamente alto, sugerindo previsões menos precisas. **RandomForest**, **SVR**, e **KNeighbors** tiveram desempenhos medianos, com erros mais altos e baixa capacidade explicativa (R² muito baixo).
+
+**Decision Tree** e **SGDR** apresentaram resultados extremamente insatisfatórios, com o último indicando um erro de cálculo grave. Em resumo, **GradientBoosting** é a melhor escolha, enquanto **SGDR** e **Decision Tree** devem ser descartados.
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>RMSE</th>
+      <th>MSE</th>
+      <th>MAE</th>
+      <th>MAPE</th>
+      <th>R2</th>
+      <th>ExplainedVariance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3</th>
+      <td>GradientBoosting</td>
+      <td>84577.95</td>
+      <td>7153429816.57</td>
+      <td>20403.63</td>
+      <td>0.53</td>
+      <td>0.11</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Redes_neurais</td>
+      <td>85502.12</td>
+      <td>7310612256.56</td>
+      <td>21152.99</td>
+      <td>0.48</td>
+      <td>0.09</td>
+      <td>0.10</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Linear</td>
+      <td>85654.74</td>
+      <td>7336734695.69</td>
+      <td>23432.51</td>
+      <td>0.74</td>
+      <td>0.09</td>
+      <td>0.09</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>CatBoost</td>
+      <td>86210.56</td>
+      <td>7432261244.01</td>
+      <td>20579.82</td>
+      <td>0.52</td>
+      <td>0.08</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>XGBR</td>
+      <td>86510.40</td>
+      <td>7484048894.24</td>
+      <td>20853.33</td>
+      <td>0.53</td>
+      <td>0.07</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Quantile</td>
+      <td>87247.60</td>
+      <td>7612143629.71</td>
+      <td>20809.65</td>
+      <td>0.51</td>
+      <td>0.05</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SVR</td>
+      <td>88525.66</td>
+      <td>7836792869.53</td>
+      <td>22057.49</td>
+      <td>0.54</td>
+      <td>0.03</td>
+      <td>0.05</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>RandomForest</td>
+      <td>88606.14</td>
+      <td>7851048450.30</td>
+      <td>22298.04</td>
+      <td>0.56</td>
+      <td>0.02</td>
+      <td>0.02</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>KNeighbors</td>
+      <td>89134.08</td>
+      <td>7944884106.39</td>
+      <td>23171.82</td>
+      <td>0.57</td>
+      <td>0.01</td>
+      <td>0.01</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Decision_tree</td>
+      <td>115366.31</td>
+      <td>13309385281.26</td>
+      <td>28740.35</td>
+      <td>0.70</td>
+      <td>-0.65</td>
+      <td>-0.65</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>SGDR</td>
+      <td>487363997117125312.00</td>
+      <td>237523665685981347699930809092800512.00</td>
+      <td>387990650036058944.00</td>
+      <td>27434527821995.32</td>
+      <td>-29535066995239774792450048.00</td>
+      <td>-10816457118337098342989824.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+**Ranking dos Modelos**
+
+O gráfico abaixo mostra quantas vezes cada modelo ficou em cada posição, através do ranqueamento da diferença entre sua predição e o valor real. 
+
+- O modelo **Decision Tree** foi o que mais vezes ficou em primeiro lugar, mas também ficou muitas vezes em penúltimo, demonstrando que ele é bastante inconsistente em suas predições. 
+
+- **GradientBoosting** e **CatBoost** se destacam como os modelos mais consistentes, frequentemente ocupando posições intermediárias e superiores, com poucas ocorrências nas últimas posições. 
+
+- **RandomForest** e **XGBR** também apresentam um bom equilíbrio, mantendo-se nas posições medianas, sugerindo boa performance geral. Em contrapartida, 
+- **Linear** frequentemente ocupa posições mais baixas, sendo o modelo frequentemente classificado em penúltimo lugar. 
+
+- **Redes Neurais**, **SVR** e **KNeighbors** têm um desempenho mediano, com posições distribuídas de forma equilibrada, mas raramente nas primeiras colocações. 
+
+- **Quantile** apresenta uma variação significativa, ficando tanto nas melhores quanto nas piores posições.
+
+- No final, **GradientBoosting** e **CatBoost** são as escolhas mais confiáveis, enquanto **Decision Tree** tem o pior desempenho.
+
+![imagens](imagens/distribuição_posições_modelos.png)
+
+
+Para a tunagem dos hiperparametros selecionarei os modelos:
+
+- **GradientBoosting**
+- **CatBoost**
+- **Redes Neurais**
+- **XGBR**
+
+
+
+
