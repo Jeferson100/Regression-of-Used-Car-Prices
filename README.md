@@ -278,6 +278,121 @@ Para a tunagem dos hiperparametros selecionarei os modelos:
 - **Redes Neurais**
 - **XGBR**
 
+Os hiperparametros escolhidos para cada modelo foram os seguintes:
+
+- **GradientBoosting**:
+  - `n_estimators`: 70
+  - `max_features`: 10
+  - `max_depth`: 2
+  - `learning_rate`: 0.2
+  - `criterion`: `squared_error`	
+
+- **CatBoost**
+  - `learning_rate`: 0.8
+  - `l2_leaf_reg`: 7
+  - `iterations`: 50
+  - `depth`: 5
+
+- **XGBR**
+  - `n_estimators`: 50
+  - `max_features`: 6
+  - `max_depth`: 70
+  - `criterion`: `absolute_error`
+
+- **Redes Neurais**
+  ```text
+  Model: "sequential"
+  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+  ┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+  │ dense (Dense)                   │ (None, 32)             │         1,728 │
+  ├─────────────────────────────────┼────────────────────────┼───────────────┤
+  │ dense_1 (Dense)                 │ (None, 32)             │         1,056 │
+  ├─────────────────────────────────┼────────────────────────┼───────────────┤
+  │ dense_2 (Dense)                 │ (None, 32)             │         1,056 │
+  ├─────────────────────────────────┼────────────────────────┼───────────────┤
+  │ dense_3 (Dense)                 │ (None, 32)             │         1,056 │
+  ├─────────────────────────────────┼────────────────────────┼───────────────┤
+  │ dense_4 (Dense)                 │ (None, 32)             │         1,056 │
+  ├─────────────────────────────────┼────────────────────────┼───────────────┤
+  │ dense_5 (Dense)                 │ (None, 1)              │            33 │
+  └─────────────────────────────────┴────────────────────────┴───────────────┘
+
+### Avaliação dos Modelos
+
+### Análise dos Modelos Treinados
+
+1. **Gradiente Boost Tunado:** Melhor desempenho em MAE (20,774.68) e MAPE (0.55), com R² de 0.11. É o mais eficiente para previsões individuais.
+2. **CatBoost Tunado:** Resultados próximos ao Gradiente Boost, com MAE de 20,685.72 e MAPE de 0.53. Explicabilidade semelhante com R² de 0.10.
+3. **Random Forest Tunado:** Pior RMSE (86,644.89) e MSE, mas o menor MAPE (0.51), indicando maior precisão relativa, embora com baixa explicação (R² de 0.07).
+4. **Redes Neurais Tunado:** MAE mais alto (21,437.62) e desempenho intermediário em RMSE, com R² de 0.09 e Explained Variance de 0.10.
+5. **Conclusão:** Gradiente Boost é o melhor para previsões individuais, enquanto Random Forest pode ser útil onde a precisão percentual é mais importante.
 
 
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>RMSE</th>
+      <th>MSE</th>
+      <th>MAE</th>
+      <th>MAPE</th>
+      <th>R2</th>
+      <th>ExplainedVariance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>gradiente_boost_tunado</td>
+      <td>84718.02</td>
+      <td>7177142338.58</td>
+      <td>20774.68</td>
+      <td>0.55</td>
+      <td>0.11</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>cat_boost_tunado</td>
+      <td>84938.16</td>
+      <td>7214490373.20</td>
+      <td>20685.72</td>
+      <td>0.53</td>
+      <td>0.10</td>
+      <td>0.10</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>redes_neurais_tunado</td>
+      <td>85405.27</td>
+      <td>7294060817.89</td>
+      <td>21437.62</td>
+      <td>0.52</td>
+      <td>0.09</td>
+      <td>0.10</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>random_forest_tunado</td>
+      <td>86644.89</td>
+      <td>7507337584.81</td>
+      <td>20929.72</td>
+      <td>0.51</td>
+      <td>0.07</td>
+      <td>0.07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
+### Referências
+
+@misc{playground-series-s4e9,
+    author = {Walter Reade, Ashley Chow},
+    title = {Regression of Used Car Prices},
+    publisher = {Kaggle},
+    year = {2024},
+    url = {https://kaggle.com/competitions/playground-series-s4e9}
+}
