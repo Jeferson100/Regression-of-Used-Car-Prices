@@ -69,9 +69,15 @@ etc.
 11. **One-Hot Encoding para Colunas Categóricas**
     - Aplicamos One-Hot Encoding para as colunas categóricas com uma frequência mínima de especificada para cada coluna, criando novas colunas para categorias pouco frequentes.
 
-12. **Normalização das Variáveis Numéricas**
-    - Normalizamos as variáveis numéricas utilizando a técnica de escalonamento StandardScaler.
+12. **Transformando as Colunas Numericas**
 
+    **Cada coluna foi transformada com um metodo diferente:**
+    - `milage`: `BoxCoxTransformer`
+    - `Cilindros`: `StandardScaler`
+    - `HP`: `BoxCoxTransformer`
+    - `idade_carro`: `YeoJohnsonTransformer`
+    - `marchas`: `MinMaxScaler`
+    
 Após todo os tratamentos os conjuntos de dados ficaram com os seguintes tamanhos:
 
 - treino: `(150826, 53)`

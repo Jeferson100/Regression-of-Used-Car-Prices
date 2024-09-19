@@ -23,3 +23,4 @@ scikit-optimize==0.10.0
 keras-tuner==1.4.7
 venn-abers==1.4.2
 lazypredict
+flaml

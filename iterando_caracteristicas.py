@@ -17,6 +17,9 @@ from xgboost import XGBRegressor
 from catboost import CatBoostRegressor
 import keras
 from keras import layers
+from sklearn.ensemble import HistGradientBoostingRegressor
+import lightgbm as lgb
+import joblib
 
 ##Avaliacao
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, median_absolute_error, explained_variance_score,root_mean_squared_error,mean_absolute_percentage_error,root_mean_squared_log_error
@@ -104,23 +107,19 @@ importancia_shap = df_shap_importancia(shap_values)
 
 print(importancia_shap.head(10))
 
-diretorio = 'dados'
-
-with open(diretorio + '/importancia_carcteristicas.pkl','wb') as f:
-    pickle.dump(importancia_shap, f)
-
-
 modelos = {
         'Linear': LinearRegression(),
         'Decision_tree':DecisionTreeRegressor(),
         'RandomForest':RandomForestRegressor(),
         'GradientBoosting':GradientBoostingRegressor(),
         'KNeighbors':KNeighborsRegressor(),
-        'SVR':SVR(),
+        #'SVR':SVR(),
+        'HistGradient':HistGradientBoostingRegressor(),
         'XGBR':XGBRegressor(),
-        'Quantile':QuantileRegressor(),
+        #'Quantile':QuantileRegressor(),
         'CatBoost':CatBoostRegressor(),
-        'SGDR':SGDRegressor()
+        #'SGDR':SGDRegressor(),
+        'LightGBM': lgb,
     }
 colunas_nivel = {}
 modelos_base_treinados = {}
@@ -165,8 +164,37 @@ for num_colunms in range(10,len(importancia_shap)):
             fim = time.time()
             tempo_execucao = round((fim - inicio) / 60,2)
             print(f"Tempo de execução {tempo_execucao} do modelo: {name+'_'+str(num_colunms)}")
+        
+        elif name == 'LightGBM':
+            train_data = model.Dataset(x_train_selection, label=y_train)
+            test_data = model.Dataset(x_test_selection, label=y_test, reference=train_data)
+
+            # Definindo os parâmetros do modelo
+            params = {
+                'objective': 'regression',
+                'metric': 'rmse',  # Root Mean Squared Error
+                'boosting_type': 'gbdt',  # Gradient Boosting Decision Tree
+                'verbose': 0
+            }
+
+            # Treinando o modelo
+            regressor = model.train(
+                params, 
+                train_data, 
+                num_boost_round=1000, 
+                valid_sets=[test_data], 
+                callbacks=[lgb.early_stopping(stopping_rounds=100)]
+            )
+            y_pred = regressor.predict(x_test_selection, num_iteration=regressor.best_iteration)
+            
+            modelos_base_treinados[name+'_'+str(num_colunms)] = model
+            predict_modelos[name+'_'+str(num_colunms)] = y_pred
+            fim = time.time()
+            tempo_execucao = round((fim - inicio) / 60,2)
+            print(f"Tempo de execução {tempo_execucao} do modelo: {name+'_'+str(num_colunms)}")
             
         else:    
+            
             if name == 'CatBoost':
                 model_treinado = model.fit(x_train_selection, y_train, verbose=0)
             else:
@@ -179,10 +207,14 @@ for num_colunms in range(10,len(importancia_shap)):
             tempo_execucao = round((fim - inicio) / 60,2)
             print(f"Tempo de execução {tempo_execucao} do modelo: {name+'_'+str(num_colunms)}")
             
-diretorio = 'modelos'
+"""diretorio = 'modelos'
 
-with open(diretorio + '/modelos_teste_caracteristicas.pkl', 'wb') as f:
-    pickle.dump(modelos_base_treinados, f)
+try:
+    with open(diretorio + '/modelos_teste_caracteristicas.pkl', 'wb') as f:
+        pickle.dump(modelos_base_treinados, f)
+except:
+    with open('modelos_base_treinados.pkl', 'wb') as f:
+        joblib.dump(modelos_base_treinados, f)"""
 
 
 
@@ -210,6 +242,7 @@ results_padrao = pd.DataFrame(model_metrics_padrao).sort_values(by='RMSE')
 print(results_padrao)
 
 diretorio = 'dados'
+
 with open(diretorio + '/resultados_teste_caracterisricas.pkl','wb') as f:
     pickle.dump(results_padrao, f)
 
