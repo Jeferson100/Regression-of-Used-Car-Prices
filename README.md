@@ -103,7 +103,7 @@ Este gráfico ajuda a visualizar o efeito de cada variável no modelo, ilustrand
 
 ### Treinamento
 
-Primeiramente, utilizei onze algoritmos para o treinamento com seus parâmetros padrão:
+Primeiramente, utilizei treze algoritmos para o treinamento com seus parâmetros padrão:
 
 - `LinearRegression()`
 - `DecisionTreeRegressor()`
@@ -116,13 +116,17 @@ Primeiramente, utilizei onze algoritmos para o treinamento com seus parâmetros 
 - `KNeighborsRegressor()`
 - `QuantileRegressor()`
 - `RandomForestRegressor()`
+- `HistGradientBoostingRegressor()`
+- `LightGBM`
 
-O modelo **GradientBoosting** apresentou o melhor desempenho geral, com o menor RMSE e MSE, e um MAE relativamente baixo, tornando-o a escolha mais confiável entre os modelos. **Redes Neurais** e **CatBoost** também se destacaram, embora tenham um desempenho ligeiramente inferior em precisão e explicação da variação dos dados.
+O modelo **LightGBM** apresentou o melhor desempenho geral, com o menor RMSE e MSE, e um MAE relativamente baixo, tornando-o a escolha mais confiável entre os modelos. **HistGradientBoosting** e **GradientBoosting** também se destacaram, embora tenham um desempenho ligeiramente inferior em precisão e explicação da variação dos dados.
 
 **Linear Regression** teve um MAE significativamente alto, sugerindo previsões menos precisas. **RandomForest**, **SVR**, e **KNeighbors** tiveram desempenhos medianos, com erros mais altos e baixa capacidade explicativa (R² muito baixo).
 
-**Decision Tree** e **SGDR** apresentaram resultados extremamente insatisfatórios, com o último indicando um erro de cálculo grave. Em resumo, **GradientBoosting** é a melhor escolha, enquanto **SGDR** e **Decision Tree** devem ser descartados.
+**Decision Tree** e **SGDR** apresentaram resultados extremamente insatisfatórios, com o último indicando um erro de cálculo grave. Em resumo, **LightGBM** é a melhor escolha, enquanto **SGDR** e **Decision Tree** devem ser descartados.
 
+
+ 
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -138,254 +142,144 @@ O modelo **GradientBoosting** apresentou o melhor desempenho geral, com o menor 
   </thead>
   <tbody>
     <tr>
+      <th>11</th>
+      <td>LightGBM</td>
+      <td>84443.26</td>
+      <td>7130664045.26</td>
+      <td>20239.49</td>
+      <td>0.53</td>
+      <td>0.11</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
       <th>3</th>
       <td>GradientBoosting</td>
-      <td>84577.95</td>
-      <td>7153429816.57</td>
-      <td>20403.63</td>
+      <td>84592.11</td>
+      <td>7155824589.40</td>
+      <td>20413.48</td>
       <td>0.53</td>
+      <td>0.11</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>HistGradient</td>
+      <td>84625.07</td>
+      <td>7161402635.04</td>
+      <td>20254.24</td>
+      <td>0.52</td>
       <td>0.11</td>
       <td>0.11</td>
     </tr>
     <tr>
       <th>6</th>
       <td>Redes_neurais</td>
-      <td>85502.12</td>
-      <td>7310612256.56</td>
-      <td>21152.99</td>
-      <td>0.48</td>
-      <td>0.09</td>
-      <td>0.10</td>
+      <td>84628.96</td>
+      <td>7162060955.62</td>
+      <td>20025.02</td>
+      <td>0.50</td>
+      <td>0.11</td>
+      <td>0.11</td>
     </tr>
     <tr>
       <th>0</th>
       <td>Linear</td>
-      <td>85654.74</td>
-      <td>7336734695.69</td>
-      <td>23432.51</td>
+      <td>85654.30</td>
+      <td>7336658614.17</td>
+      <td>23433.88</td>
       <td>0.74</td>
+      <td>0.09</td>
+      <td>0.09</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>SGDR</td>
+      <td>85734.73</td>
+      <td>7350444007.65</td>
+      <td>22611.69</td>
+      <td>0.70</td>
       <td>0.09</td>
       <td>0.09</td>
     </tr>
     <tr>
       <th>9</th>
       <td>CatBoost</td>
-      <td>86210.56</td>
-      <td>7432261244.01</td>
-      <td>20579.82</td>
+      <td>86377.40</td>
+      <td>7461056085.36</td>
+      <td>20635.39</td>
       <td>0.52</td>
-      <td>0.08</td>
-      <td>0.08</td>
+      <td>0.07</td>
+      <td>0.07</td>
     </tr>
     <tr>
       <th>7</th>
       <td>XGBR</td>
-      <td>86510.40</td>
-      <td>7484048894.24</td>
-      <td>20853.33</td>
+      <td>86648.85</td>
+      <td>7508023709.40</td>
+      <td>20900.91</td>
       <td>0.53</td>
       <td>0.07</td>
       <td>0.07</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>Quantile</td>
-      <td>87247.60</td>
-      <td>7612143629.71</td>
-      <td>20809.65</td>
-      <td>0.51</td>
-      <td>0.05</td>
-      <td>0.07</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>SVR</td>
-      <td>88525.66</td>
-      <td>7836792869.53</td>
-      <td>22057.49</td>
-      <td>0.54</td>
-      <td>0.03</td>
-      <td>0.05</td>
-    </tr>
-    <tr>
       <th>2</th>
       <td>RandomForest</td>
-      <td>88606.14</td>
-      <td>7851048450.30</td>
-      <td>22298.04</td>
+      <td>88684.80</td>
+      <td>7864994502.35</td>
+      <td>22298.27</td>
       <td>0.56</td>
       <td>0.02</td>
       <td>0.02</td>
     </tr>
     <tr>
+      <th>5</th>
+      <td>SVR</td>
+      <td>89320.11</td>
+      <td>7978081164.68</td>
+      <td>22947.46</td>
+      <td>0.58</td>
+      <td>0.01</td>
+      <td>0.03</td>
+    </tr>
+    <tr>
       <th>4</th>
       <td>KNeighbors</td>
-      <td>89134.08</td>
-      <td>7944884106.39</td>
-      <td>23171.82</td>
+      <td>89411.65</td>
+      <td>7994442669.22</td>
+      <td>22951.68</td>
       <td>0.57</td>
       <td>0.01</td>
       <td>0.01</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>Decision_tree</td>
-      <td>115366.31</td>
-      <td>13309385281.26</td>
-      <td>28740.35</td>
-      <td>0.70</td>
-      <td>-0.65</td>
-      <td>-0.65</td>
+      <th>8</th>
+      <td>Quantile</td>
+      <td>90778.05</td>
+      <td>8240654676.99</td>
+      <td>27361.99</td>
+      <td>0.87</td>
+      <td>-0.02</td>
+      <td>0.00</td>
     </tr>
     <tr>
-      <th>10</th>
-      <td>SGDR</td>
-      <td>487363997117125312.00</td>
-      <td>237523665685981347699930809092800512.00</td>
-      <td>387990650036058944.00</td>
-      <td>27434527821995.32</td>
-      <td>-29535066995239774792450048.00</td>
-      <td>-10816457118337098342989824.00</td>
+      <th>1</th>
+      <td>Decision_tree</td>
+      <td>115881.07</td>
+      <td>13428422142.87</td>
+      <td>28877.32</td>
+      <td>0.69</td>
+      <td>-0.67</td>
+      <td>-0.67</td>
     </tr>
   </tbody>
 </table>
-</div>
+
 
 **Ranking dos Modelos**
 
-O gráfico abaixo mostra quantas vezes cada modelo ficou em cada posição, através do ranqueamento da diferença entre sua predição e o valor real. 
-
-- O modelo **Decision Tree** foi o que mais vezes ficou em primeiro lugar, mas também ficou muitas vezes em penúltimo, demonstrando que ele é bastante inconsistente em suas predições. 
-
-- **GradientBoosting** e **CatBoost** se destacam como os modelos mais consistentes, frequentemente ocupando posições intermediárias e superiores, com poucas ocorrências nas últimas posições. 
-
-- **RandomForest** e **XGBR** também apresentam um bom equilíbrio, mantendo-se nas posições medianas, sugerindo boa performance geral. Em contrapartida, 
-- **Linear** frequentemente ocupa posições mais baixas, sendo o modelo frequentemente classificado em penúltimo lugar. 
-
-- **Redes Neurais**, **SVR** e **KNeighbors** têm um desempenho mediano, com posições distribuídas de forma equilibrada, mas raramente nas primeiras colocações. 
-
-- **Quantile** apresenta uma variação significativa, ficando tanto nas melhores quanto nas piores posições.
-
-- No final, **GradientBoosting** e **CatBoost** são as escolhas mais confiáveis, enquanto **Decision Tree** tem o pior desempenho.
+O gráfico abaixo mostra quantas vezes cada modelo ficou em cada posição, através do ranqueamento da diferença entre sua predição e o valor real. O modelo **Decision Tree** foi o que mais vezes ficou em primeiro lugar, mas também ficou muitas vezes em penúltimo, demonstrando que ele é bastante inconsistente em suas predições. **HistGradient** e **LightGBM** se destacam como os modelos mais consistentes, frequentemente ocupando posições intermediárias e superiores, com poucas ocorrências nas últimas posições. **RandomForest** e **XGBR** também apresentam um bom equilíbrio, mantendo-se nas posições medianas, sugerindo boa performance geral. Em contrapartida, **Linear** frequentemente ocupa posições mais baixas, sendo o modelo frequentemente classificado em penúltimo lugar. **Redes Neurais**, **SVR** e **KNeighbors** têm um desempenho mediano, com posições distribuídas de forma equilibrada, mas raramente nas primeiras colocações. **Quantile** apresenta uma variação significativa, ficando tanto nas melhores quanto nas piores posições. No geral, **HistGradient** e **LightGBM** são as escolhas mais confiáveis, enquanto **Decision Tree** tem o pior desempenho.
 
 ![imagens](imagens/distribuição_posições_modelos.png)
-
-
-Para a tunagem dos hiperparametros selecionarei os modelos:
-
-- **GradientBoosting**
-- **CatBoost**
-- **Redes Neurais**
-- **XGBR**
-
-Os hiperparametros escolhidos para cada modelo foram os seguintes:
-
-- **GradientBoosting**:
-  - `n_estimators`: 70
-  - `max_features`: 10
-  - `max_depth`: 2
-  - `learning_rate`: 0.2
-  - `criterion`: `squared_error`	
-
-- **CatBoost**
-  - `learning_rate`: 0.8
-  - `l2_leaf_reg`: 7
-  - `iterations`: 50
-  - `depth`: 5
-
-- **XGBR**
-  - `n_estimators`: 50
-  - `max_features`: 6
-  - `max_depth`: 70
-  - `criterion`: `absolute_error`
-
-- **Redes Neurais**
-  ```text
-  Model: "sequential"
-  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-  ┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
-  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-  │ dense (Dense)                   │ (None, 32)             │         1,728 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_1 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_2 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_3 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_4 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_5 (Dense)                 │ (None, 1)              │            33 │
-  └─────────────────────────────────┴────────────────────────┴───────────────┘
-
-### Avaliação dos Modelos
-
-### Análise dos Modelos Treinados
-
-1. **Gradiente Boost Tunado:** Melhor desempenho em MAE (20,774.68) e MAPE (0.55), com R² de 0.11. É o mais eficiente para previsões individuais.
-2. **CatBoost Tunado:** Resultados próximos ao Gradiente Boost, com MAE de 20,685.72 e MAPE de 0.53. Explicabilidade semelhante com R² de 0.10.
-3. **Random Forest Tunado:** Pior RMSE (86,644.89) e MSE, mas o menor MAPE (0.51), indicando maior precisão relativa, embora com baixa explicação (R² de 0.07).
-4. **Redes Neurais Tunado:** MAE mais alto (21,437.62) e desempenho intermediário em RMSE, com R² de 0.09 e Explained Variance de 0.10.
-5. **Conclusão:** Gradiente Boost é o melhor para previsões individuais, enquanto Random Forest pode ser útil onde a precisão percentual é mais importante.
-
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Model</th>
-      <th>RMSE</th>
-      <th>MSE</th>
-      <th>MAE</th>
-      <th>MAPE</th>
-      <th>R2</th>
-      <th>ExplainedVariance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>gradiente_boost_tunado</td>
-      <td>84718.02</td>
-      <td>7177142338.58</td>
-      <td>20774.68</td>
-      <td>0.55</td>
-      <td>0.11</td>
-      <td>0.11</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>cat_boost_tunado</td>
-      <td>84938.16</td>
-      <td>7214490373.20</td>
-      <td>20685.72</td>
-      <td>0.53</td>
-      <td>0.10</td>
-      <td>0.10</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>redes_neurais_tunado</td>
-      <td>85405.27</td>
-      <td>7294060817.89</td>
-      <td>21437.62</td>
-      <td>0.52</td>
-      <td>0.09</td>
-      <td>0.10</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>random_forest_tunado</td>
-      <td>86644.89</td>
-      <td>7507337584.81</td>
-      <td>20929.72</td>
-      <td>0.51</td>
-      <td>0.07</td>
-      <td>0.07</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 ### Referências
 
