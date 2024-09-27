@@ -89,8 +89,7 @@ No final a quantidade de dados para treino e teste e a seguinte:
 
 - teste: `(37707, 68)`
 
-### 
-Principais Características
+### Principais Características
 
 Utilizando a biblioteca [Shapley Additive exPlanations (SHAP)](https://shap.readthedocs.io/en/latest/), podemos identificar as variáveis mais importantes no modelo de regressão
 
