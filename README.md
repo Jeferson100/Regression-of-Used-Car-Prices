@@ -66,50 +66,80 @@ etc.
 10. **Imputação dos valores faltantes na Coluna cilindros"**
     - Preenche valores faltantes na coluna `cilindros` utilizando um modelo de imputação treinado com as características `cambio`, `fuel_type`, `marchas`, `idade_carro`,`HP`.
 
-11. **One-Hot Encoding para Colunas Categóricas**
-    - Aplicamos One-Hot Encoding para as colunas categóricas com uma frequência mínima de especificada para cada coluna, criando novas colunas para categorias pouco frequentes.
+11. **Categorização das variaveis numericas**
+    - Primeiro, a coluna `hp` (potência) é categorizada em quatro níveis: `Baixo`, `Médio`, `Alto` e `Muito Alto` com base em intervalos específicos.
 
-12. **Transformando as Colunas Numericas**
+    - A coluna `idade_carro` é dividida em cinco categorias: `Novo`, `semi-novo`, `Moderado`, `Velho` e `Muito Velho`, conforme os intervalos de idade do carro.
 
-    **Cada coluna foi transformada com um metodo diferente:**
-    - `milage`: `BoxCoxTransformer`
-    - `Cilindros`: `StandardScaler`
-    - `HP`: `BoxCoxTransformer`
-    - `idade_carro`: `YeoJohnsonTransformer`
-    - `marchas`: `MinMaxScaler`
+    - A coluna `milage` (quilometragem) é categorizada em quatro níveis: `baixo`, `Moderado`, `Alto`, e `Muito Alto`, baseando-se nos intervalos de quilometragem.
+
+    - A coluna `cilindros` é categorizada em três níveis: `Baixo`, `Moderado` e `Alto`, de acordo com o número de cilindros do veículo.
     
-Após todo os tratamentos os conjuntos de dados ficaram com os seguintes tamanhos:
+    - A coluna `marchas` (número de marchas) é categorizada em três níveis: `Baixo`, `Moderado` e `Alto`.
+12. **Dropando colunas**
 
-- treino: `(150826, 53)`
+    - Após a categorização, as colunas numéricas `hp`, `idade_carro`, `cilindros`, `marchas`, `milage` são removidas do conjunto de dados.
 
-- teste: `(37707, 53)`
+12. **Criando OneHot nas colunas categóricas**
+    - As colunas categóricas são codificadas usando OneHot Encoding. A porcentagem de frequência para manter determinadas categorias é especificada.
 
-### Principais Características
+No final a quantidade de dados para treino e teste e a seguinte:
 
-Utilizando a biblioteca [Shapley Additive exPlanations (SHAP)](https://shap.readthedocs.io/en/latest/), podemos identificar as variáveis mais importantes no modelo de regressão, com destaque para as variáveis `milage`, `hp`, `idade_carro`, `brand_Porsche`, e `brand_Land`.
+- treino: `(150826, 68)`
+
+- teste: `(37707, 68)`
+
+### 
+Principais Características
+
+Utilizando a biblioteca [Shapley Additive exPlanations (SHAP)](https://shap.readthedocs.io/en/latest/), podemos identificar as variáveis mais importantes no modelo de regressão
 
 Ao analisar o gráfico de `summary_plot`, observamos os seguintes insights:
 
-- **`milage` (quilometragem)**: Valores **baixos** de quilometragem (em azul) têm um impacto **positivo** nas previsões, enquanto valores **altos** (em vermelho) impactam **negativamente**. Isso indica que carros com quilometragem mais alta tendem a ter preços **mais baixos**, enquanto veículos com baixa quilometragem são avaliados com preços **mais altos**.
+1. **milage_categorica_baixo**: 
+   - Essa categoria tem o maior impacto no modelo.
+   - Carros com baixa quilometragem influenciam fortemente as previsões.
 
-- **`hp` (potência)**: Valores **altos** de potência estão associados a impactos **positivos** nas previsões, sugerindo que carros com mais potência são, em geral, previstos com preços **mais altos**.
+2. **marchas_categorica_Moderado**:
+   - O número de marchas na categoria moderada (entre 4 e 6 marchas) também apresenta uma influência significativa.
+   - Indica que a quantidade de marchas influencia o comportamento do modelo.
 
-- **`idade_carro` (idade do carro)**: Carros mais antigos (em vermelho) têm um impacto **negativo** no valor previsto, enquanto carros mais novos (em azul) têm um efeito **positivo**, o que é esperado, já que veículos mais novos geralmente possuem maior valor de mercado.
+3. **hp_categorica_Muito Alto**:
+   - Carros com potência muito alta (HP > 400) têm um impacto relevante nas previsões.
+   - Sugere que veículos com alta potência são decisivos no modelo.
 
-- **`brand_Porsche`**: A marca Porsche tem um impacto **fortemente positivo** nas previsões, indicando que os carros dessa marca são frequentemente associados a preços **mais elevados**, como esperado, dado o prestígio e o alto custo dos veículos Porsche.
+4. **milage_categorica_Moderado**:
+   - A quilometragem moderada também afeta o modelo, mas menos que a baixa quilometragem.
 
-- **`cambio_manual`**: Veículos com câmbio manual parecem ter um impacto **negativo** nas previsões, sugerindo que carros com câmbio manual são frequentemente avaliados com preços **mais baixos** em comparação com aqueles com câmbio automático ou dual.
+5. **idade_carro_categorica_Novo**:
+   - Carros novos (idade <= 3 anos) têm uma influência considerável, sugerindo que veículos mais novos são fatores relevantes.
 
-- **`accident_At least 1 accident or damage reported` (acidente/dano reportado)**: Como esperado, a presença de acidentes ou danos reportados (valores em vermelho) tem um impacto **negativo** significativo, diminuindo o valor previsto do carro. Isso reflete a percepção de que carros com histórico de acidentes ou danos tendem a ser desvalorizados.
+6. **brand_Porsche**:
+   - A marca Porsche é uma das variáveis mais influentes, o que é esperado devido ao valor agregado e características exclusivas desses veículos.
+
+7. **idade_carro_categorica_Muito Velho**:
+   - Carros muito antigos (idade > 15 anos) também têm impacto relevante, mostrando que a idade extrema do carro é um fator importante.
+
+8. **brand_infrequent_sklearn**:
+   - Marcas menos frequentes influenciam o modelo, indicando que veículos de marcas raras podem afetar as previsões.
+
+9. **idade_carro_categorica_semi-novo**:
+   - Carros semi-novos (entre 3 e 6 anos) têm um impacto moderado no modelo.
+
+10. **brand_Mercedes-Benz**:
+    - Carros da marca Mercedes-Benz também têm influência significativa, refletindo o prestígio associado à marca.
 
 Este gráfico ajuda a visualizar o efeito de cada variável no modelo, ilustrando como diferentes características afetam o preço previsto de um veículo.
 
-![Analise Exploratória](imagens/shap_summary_plot.png)
+
+
+#![Analise Exploratória](imagens/shap_summary_plot_categorico.png)
+
 
 
 ### Treinamento
 
-Primeiramente, utilizei onze algoritmos para o treinamento com seus parâmetros padrão:
+Primeiramente, utilizei treze algoritmos para o treinamento com seus parâmetros padrão:
 
 - `LinearRegression()`
 - `DecisionTreeRegressor()`
@@ -122,12 +152,14 @@ Primeiramente, utilizei onze algoritmos para o treinamento com seus parâmetros 
 - `KNeighborsRegressor()`
 - `QuantileRegressor()`
 - `RandomForestRegressor()`
+- `HistGradientBoostingRegressor()`
+- `LightGBM`
 
-O modelo **GradientBoosting** apresentou o melhor desempenho geral, com o menor RMSE e MSE, e um MAE relativamente baixo, tornando-o a escolha mais confiável entre os modelos. **Redes Neurais** e **CatBoost** também se destacaram, embora tenham um desempenho ligeiramente inferior em precisão e explicação da variação dos dados.
+O modelo **LightGBM** apresentou o melhor desempenho geral, com o menor RMSE e MSE, e um MAE relativamente baixo, tornando-o a escolha mais confiável entre os modelos. **Redes Neurais** e **GradientBoosting** também se destacaram, embora tenham um desempenho ligeiramente inferior em precisão e explicação da variação dos dados.
 
 **Linear Regression** teve um MAE significativamente alto, sugerindo previsões menos precisas. **RandomForest**, **SVR**, e **KNeighbors** tiveram desempenhos medianos, com erros mais altos e baixa capacidade explicativa (R² muito baixo).
 
-**Decision Tree** e **SGDR** apresentaram resultados extremamente insatisfatórios, com o último indicando um erro de cálculo grave. Em resumo, **GradientBoosting** é a melhor escolha, enquanto **SGDR** e **Decision Tree** devem ser descartados.
+**Decision Tree** e **Quantile** apresentaram resultados extremamente insatisfatórios, com o último indicando um erro de cálculo grave. Em resumo, **	LightGBM** é a melhor escolha, enquanto **	Quantile** e **Decision Tree** devem ser descartados.
 
 <table border="1" class="dataframe">
   <thead>
@@ -144,254 +176,149 @@ O modelo **GradientBoosting** apresentou o melhor desempenho geral, com o menor 
   </thead>
   <tbody>
     <tr>
+      <th>11</th>
+      <td>LightGBM</td>
+      <td>84871.094410</td>
+      <td>7.203103e+09</td>
+      <td>21058.709389</td>
+      <td>0.555438</td>
+      <td>0.104325</td>
+      <td>0.104434</td>
+    </tr>
+    <tr>
       <th>3</th>
       <td>GradientBoosting</td>
-      <td>84577.95</td>
-      <td>7153429816.57</td>
-      <td>20403.63</td>
-      <td>0.53</td>
-      <td>0.11</td>
-      <td>0.11</td>
+      <td>84895.561185</td>
+      <td>7.207256e+09</td>
+      <td>21154.666298</td>
+      <td>0.566044</td>
+      <td>0.103808</td>
+      <td>0.103926</td>
     </tr>
     <tr>
       <th>6</th>
       <td>Redes_neurais</td>
-      <td>85502.12</td>
-      <td>7310612256.56</td>
-      <td>21152.99</td>
-      <td>0.48</td>
-      <td>0.09</td>
-      <td>0.10</td>
+      <td>84900.872259</td>
+      <td>7.208158e+09</td>
+      <td>20684.055870</td>
+      <td>0.530414</td>
+      <td>0.103696</td>
+      <td>0.104073</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>HistGradient</td>
+      <td>84929.142142</td>
+      <td>7.212959e+09</td>
+      <td>21049.514194</td>
+      <td>0.560679</td>
+      <td>0.103099</td>
+      <td>0.103203</td>
     </tr>
     <tr>
       <th>0</th>
       <td>Linear</td>
-      <td>85654.74</td>
-      <td>7336734695.69</td>
-      <td>23432.51</td>
-      <td>0.74</td>
-      <td>0.09</td>
-      <td>0.09</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>CatBoost</td>
-      <td>86210.56</td>
-      <td>7432261244.01</td>
-      <td>20579.82</td>
-      <td>0.52</td>
-      <td>0.08</td>
-      <td>0.08</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>XGBR</td>
-      <td>86510.40</td>
-      <td>7484048894.24</td>
-      <td>20853.33</td>
-      <td>0.53</td>
-      <td>0.07</td>
-      <td>0.07</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>Quantile</td>
-      <td>87247.60</td>
-      <td>7612143629.71</td>
-      <td>20809.65</td>
-      <td>0.51</td>
-      <td>0.05</td>
-      <td>0.07</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>SVR</td>
-      <td>88525.66</td>
-      <td>7836792869.53</td>
-      <td>22057.49</td>
-      <td>0.54</td>
-      <td>0.03</td>
-      <td>0.05</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>RandomForest</td>
-      <td>88606.14</td>
-      <td>7851048450.30</td>
-      <td>22298.04</td>
-      <td>0.56</td>
-      <td>0.02</td>
-      <td>0.02</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>KNeighbors</td>
-      <td>89134.08</td>
-      <td>7944884106.39</td>
-      <td>23171.82</td>
-      <td>0.57</td>
-      <td>0.01</td>
-      <td>0.01</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Decision_tree</td>
-      <td>115366.31</td>
-      <td>13309385281.26</td>
-      <td>28740.35</td>
-      <td>0.70</td>
-      <td>-0.65</td>
-      <td>-0.65</td>
+      <td>85386.997148</td>
+      <td>7.290939e+09</td>
+      <td>22428.116132</td>
+      <td>0.637301</td>
+      <td>0.093402</td>
+      <td>0.093499</td>
     </tr>
     <tr>
       <th>10</th>
       <td>SGDR</td>
-      <td>487363997117125312.00</td>
-      <td>237523665685981347699930809092800512.00</td>
-      <td>387990650036058944.00</td>
-      <td>27434527821995.32</td>
-      <td>-29535066995239774792450048.00</td>
-      <td>-10816457118337098342989824.00</td>
+      <td>85409.104479</td>
+      <td>7.294715e+09</td>
+      <td>22743.168242</td>
+      <td>0.643956</td>
+      <td>0.092933</td>
+      <td>0.093074</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>XGBR</td>
+      <td>86327.319263</td>
+      <td>7.452406e+09</td>
+      <td>21525.719846</td>
+      <td>0.558529</td>
+      <td>0.073325</td>
+      <td>0.073414</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>CatBoost</td>
+      <td>86504.879098</td>
+      <td>7.483094e+09</td>
+      <td>21337.214035</td>
+      <td>0.555554</td>
+      <td>0.069509</td>
+      <td>0.069598</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SVR</td>
+      <td>89907.324314</td>
+      <td>8.083327e+09</td>
+      <td>24993.202450</td>
+      <td>0.724653</td>
+      <td>-0.005128</td>
+      <td>0.020238</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>KNeighbors</td>
+      <td>90028.142337</td>
+      <td>8.105066e+09</td>
+      <td>23710.958448</td>
+      <td>0.588615</td>
+      <td>-0.007831</td>
+      <td>-0.007661</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>RandomForest</td>
+      <td>90681.410577</td>
+      <td>8.223118e+09</td>
+      <td>23175.101501</td>
+      <td>0.588044</td>
+      <td>-0.022510</td>
+      <td>-0.022490</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Quantile</td>
+      <td>90778.051736</td>
+      <td>8.240655e+09</td>
+      <td>27361.986395</td>
+      <td>0.874857</td>
+      <td>-0.024691</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Decision_tree</td>
+      <td>97344.824697</td>
+      <td>9.476015e+09</td>
+      <td>24590.451807</td>
+      <td>0.620066</td>
+      <td>-0.178303</td>
+      <td>-0.178266</td>
     </tr>
   </tbody>
 </table>
-</div>
+
+
 
 **Ranking dos Modelos**
 
-O gráfico abaixo mostra quantas vezes cada modelo ficou em cada posição, através do ranqueamento da diferença entre sua predição e o valor real. 
-
-- O modelo **Decision Tree** foi o que mais vezes ficou em primeiro lugar, mas também ficou muitas vezes em penúltimo, demonstrando que ele é bastante inconsistente em suas predições. 
-
-- **GradientBoosting** e **CatBoost** se destacam como os modelos mais consistentes, frequentemente ocupando posições intermediárias e superiores, com poucas ocorrências nas últimas posições. 
-
-- **RandomForest** e **XGBR** também apresentam um bom equilíbrio, mantendo-se nas posições medianas, sugerindo boa performance geral. Em contrapartida, 
-- **Linear** frequentemente ocupa posições mais baixas, sendo o modelo frequentemente classificado em penúltimo lugar. 
-
-- **Redes Neurais**, **SVR** e **KNeighbors** têm um desempenho mediano, com posições distribuídas de forma equilibrada, mas raramente nas primeiras colocações. 
-
-- **Quantile** apresenta uma variação significativa, ficando tanto nas melhores quanto nas piores posições.
-
-- No final, **GradientBoosting** e **CatBoost** são as escolhas mais confiáveis, enquanto **Decision Tree** tem o pior desempenho.
+O gráfico abaixo mostra quantas vezes cada modelo ficou em cada posição, através do ranqueamento da diferença entre sua predição e o valor real. O modelo **KNeighbors** foi o que mais vezes ficou em primeiro lugar, mas também ficou muitas vezes em penúltimo, demonstrando que ele é bastante inconsistente em suas predições. **LightGBM** e **HistGradient** se destacam como os modelos mais consistentes, frequentemente ocupando posições intermediárias e superiores, com poucas ocorrências nas últimas posições. **GradientBoosting** e **Redes Neurais** também apresentam um bom equilíbrio, mantendo-se nas posições medianas, sugerindo boa performance geral. Em contrapartida, **Linear** e **Quantile** frequentemente ocupam posições mais baixas, sendo os modelos frequentemente classificados em penúltimo lugar. **SVR** e **KNeighbors** têm um desempenho mediano, com posições distribuídas de forma equilibrada, mas raramente nas primeiras colocações. No geral, **LightGBM** e **HistGradient** são as escolhas mais confiáveis, enquanto **KNeighbors** tem o pior desempenho.
 
 ![imagens](imagens/distribuição_posições_modelos.png)
 
 
-Para a tunagem dos hiperparametros selecionarei os modelos:
-
-- **GradientBoosting**
-- **CatBoost**
-- **Redes Neurais**
-- **XGBR**
-
-Os hiperparametros escolhidos para cada modelo foram os seguintes:
-
-- **GradientBoosting**:
-  - `n_estimators`: 70
-  - `max_features`: 10
-  - `max_depth`: 2
-  - `learning_rate`: 0.2
-  - `criterion`: `squared_error`	
-
-- **CatBoost**
-  - `learning_rate`: 0.8
-  - `l2_leaf_reg`: 7
-  - `iterations`: 50
-  - `depth`: 5
-
-- **XGBR**
-  - `n_estimators`: 50
-  - `max_features`: 6
-  - `max_depth`: 70
-  - `criterion`: `absolute_error`
-
-- **Redes Neurais**
-  ```text
-  Model: "sequential"
-  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-  ┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
-  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-  │ dense (Dense)                   │ (None, 32)             │         1,728 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_1 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_2 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_3 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_4 (Dense)                 │ (None, 32)             │         1,056 │
-  ├─────────────────────────────────┼────────────────────────┼───────────────┤
-  │ dense_5 (Dense)                 │ (None, 1)              │            33 │
-  └─────────────────────────────────┴────────────────────────┴───────────────┘
-
-### Avaliação dos Modelos
-
-### Análise dos Modelos Treinados
-
-1. **Gradiente Boost Tunado:** Melhor desempenho em MAE (20,774.68) e MAPE (0.55), com R² de 0.11. É o mais eficiente para previsões individuais.
-2. **CatBoost Tunado:** Resultados próximos ao Gradiente Boost, com MAE de 20,685.72 e MAPE de 0.53. Explicabilidade semelhante com R² de 0.10.
-3. **Random Forest Tunado:** Pior RMSE (86,644.89) e MSE, mas o menor MAPE (0.51), indicando maior precisão relativa, embora com baixa explicação (R² de 0.07).
-4. **Redes Neurais Tunado:** MAE mais alto (21,437.62) e desempenho intermediário em RMSE, com R² de 0.09 e Explained Variance de 0.10.
-5. **Conclusão:** Gradiente Boost é o melhor para previsões individuais, enquanto Random Forest pode ser útil onde a precisão percentual é mais importante.
 
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Model</th>
-      <th>RMSE</th>
-      <th>MSE</th>
-      <th>MAE</th>
-      <th>MAPE</th>
-      <th>R2</th>
-      <th>ExplainedVariance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>gradiente_boost_tunado</td>
-      <td>84718.02</td>
-      <td>7177142338.58</td>
-      <td>20774.68</td>
-      <td>0.55</td>
-      <td>0.11</td>
-      <td>0.11</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>cat_boost_tunado</td>
-      <td>84938.16</td>
-      <td>7214490373.20</td>
-      <td>20685.72</td>
-      <td>0.53</td>
-      <td>0.10</td>
-      <td>0.10</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>redes_neurais_tunado</td>
-      <td>85405.27</td>
-      <td>7294060817.89</td>
-      <td>21437.62</td>
-      <td>0.52</td>
-      <td>0.09</td>
-      <td>0.10</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>random_forest_tunado</td>
-      <td>86644.89</td>
-      <td>7507337584.81</td>
-      <td>20929.72</td>
-      <td>0.51</td>
-      <td>0.07</td>
-      <td>0.07</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 ### Referências
 
